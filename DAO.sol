@@ -415,12 +415,12 @@ contract DAO is DAOInterface, Token, TokenCreation {
 
     function DAO(
         address _curator,
+        address _defaultDelegate,
         DAO_Creator _daoCreator,
         uint _proposalDeposit,
         uint _minTokensToCreate,
         uint _closingTime,
-        address _privateCreation,
-        address _defaultDelegate
+        address _privateCreation
     ) TokenCreation(_minTokensToCreate, _closingTime, _privateCreation) {
 
         curator = _curator;
