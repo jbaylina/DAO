@@ -439,13 +439,25 @@ contract DAO is DAOInterface, Token, TokenCreation {
 
         allowedRecipients[address(this)] = true;
         allowedRecipients[curator] = true;
+
+        VotesAssignedToDelegate[] assignations = votesAssignedToDelegates[defaultDelegate];
+        assignations.length = 1;
+        VotesAssignedToDelegate assignation = assignations[0];
+        assignation.fromProposalId = 1;
     }
 
     function () returns (bool success) {
-        if (now < closingTime + creationGracePeriod && msg.sender != address(extraBalance))
-            return createTokenProxy(msg.sender);
-        else
+        if (now < closingTime + creationGracePeriod && msg.sender != address(extraBalance)) {
+            uint oldTokens = balances[msg.sender];
+            createTokenProxy(msg.sender);
+            uint createdTokens = balances[msg.sender] - oldTokens;
+            VotesAssignedToDelegate[] assignations = votesAssignedToDelegates[defaultDelegate];
+            VotesAssignedToDelegate assignation = assignations[0];
+            assignation.delegatedVotes += createdTokens;
+            return true;
+        } else {
             return receiveEther();
+        }
     }
 
 
