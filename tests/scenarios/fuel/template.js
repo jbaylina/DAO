@@ -1,5 +1,4 @@
 var amounts = $amounts;
-
 var dao = web3.eth.contract($dao_abi).at('$dao_address');
 console.log("Creating DAO tokens");
 for (i = 0; i < eth.accounts.length; i++) {
@@ -8,7 +7,13 @@ for (i = 0; i < eth.accounts.length; i++) {
         to: dao.address,
         gas:200000,
         value:web3.toWei(amounts[i], "ether")
-    });
+    } /* , function(err, res) {
+        if (err) {
+            console.log(err);
+        }
+        console.log("succes: " + res);
+    } */);
+//    console.log(amounts[i]);
 }
 
 checkWork();
