@@ -679,24 +679,34 @@ contract DAO is DAOInterface, Token, TokenCreation {
                 proposalCheck = false;
         }
 
-        // Execute result
-        if (quorum >= minQuorum(p.amount) && p.yea > p.nay && proposalCheck) {
+        if (quorum >= minQuorum(p.amount)) {
             if (!p.creator.send(p.proposalDeposit))
                 throw;
 
             lastTimeMinQuorumMet = now;
+            // set the minQuorum to 20% again, in the case it has been reached
+            if (quorum > totalSupply / 5)
+                minQuorumDivisor = 5;
+        }
 
+        // Execute result
+        if (quorum >= minQuorum(p.amount) && p.yea > p.nay && proposalCheck) {
             if (!p.recipient.call.value(p.amount)(_transactionData))
                 throw;
 
             p.proposalPassed = true;
             _success = true;
-            rewardToken[address(this)] += p.amount;
-            totalRewardToken += p.amount;
-        } else if (quorum >= minQuorum(p.amount) && p.nay >= p.yea || !proposalCheck) {
-            if (!p.creator.send(p.proposalDeposit))
-                throw;
-            lastTimeMinQuorumMet = now;
+
+            // only create reward tokens when ether is not sent to the DAO itself and
+            // related addresses. Proxy addresses should be forbidden by the curator.
+            if (p.recipient != address(this) && p.recipient != address(rewardAccount)
+                && p.recipient != address(DAOrewardAccount)
+                && p.recipient != address(extraBalance)
+                && p.recipient != address(curator)) {
+
+                rewardToken[address(this)] += p.amount;
+                totalRewardToken += p.amount;
+            }
         }
 
         closeProposal(_proposalID);
@@ -970,7 +980,10 @@ contract DAO is DAOInterface, Token, TokenCreation {
 
 
     function halveMinQuorum() returns (bool _success) {
-        if (lastTimeMinQuorumMet < (now - quorumHalvingPeriod)) {
+        // this can only be called after `quorumHalvingPeriod` has passed or at anytime
+        // by the curator with a delay of at least `minProposalDebatePeriod` between the calls
+        if ((lastTimeMinQuorumMet < (now - quorumHalvingPeriod) || msg.sender == curator)
+            && lastTimeMinQuorumMet < (now - minProposalDebatePeriod)) {
             lastTimeMinQuorumMet = now;
             minQuorumDivisor *= 2;
             return true;

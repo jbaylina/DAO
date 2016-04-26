@@ -113,7 +113,7 @@ function attempt_split(argdao, prop_id, user, new_curator, split_exec_period) {
     argdao.splitDAO.sendTransaction(
         prop_id,
         new_curator,
-        {from:user, gas: 4000000});
+        {from:user, gas: 4700000});
     checkWork();
     console.log("Account '" + user + "' called splitDAO() succesfully");
 }
@@ -136,7 +136,7 @@ function attempt_execute_proposal(
     argdao.executeProposal.sendTransaction(
         prop_id,
         bytecode,
-        {from: prop_creator, gas:4000000}
+        {from: prop_creator, gas:4700000}
     );
     checkWork();
     if (argdao.proposals(prop_id)[4] == expect_closed) {

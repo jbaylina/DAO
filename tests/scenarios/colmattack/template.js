@@ -60,7 +60,7 @@ setTimeout(function() {
         dao.splitDAO.sendTransaction(
             split_proposal_id,
             attacker,
-            {from:attacker, gas: 4000000}
+            {from:attacker, gas: 4700000}
         );
         checkWork();
 

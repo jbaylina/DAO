@@ -105,7 +105,7 @@ def run(ctx):
     # burning away user tokens in the process.
     # This should happen with the latest homestead changes:
     # https://github.com/ethereum/EIPs/blob/master/EIPS/eip-2.mediawiki#specification
-    split_gas = 4000000
+    split_gas = 4700000
 
     votes = prepare_test_split(ctx, split_gas)
     oldBalance, newBalance, oldDAORewards, newDAORewards = tokens_after_split(
