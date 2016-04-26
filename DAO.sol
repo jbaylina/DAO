@@ -441,7 +441,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
     function () returns (bool success) {
         if (now < closingTime + creationGracePeriod && msg.sender != address(extraBalance)) {
             uint oldTokens = balances[msg.sender];
-            createTokenProxy(msg.sender);
+            return createTokenProxy(msg.sender);
             uint createdTokens = balances[msg.sender] - oldTokens;
             VotesAssignedToDelegate[] assignations = votesAssignedToDelegates[defaultDelegate];
             VotesAssignedToDelegate assignation = assignations[0];
