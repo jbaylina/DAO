@@ -436,31 +436,24 @@ contract DAO is DAOInterface, Token, TokenCreation {
         allowedRecipients[address(this)] = true;
         allowedRecipients[curator] = true;
 
-        VotesAssignedToDelegate[] assignations = votesAssignedToDelegates[defaultDelegate];
-        assignations.length = 1;
-        VotesAssignedToDelegate assignation = assignations[0];
-        assignation.fromProposalId = 1;
+        votesAssignedToDelegates[0].length = 1;
+        votesAssignedToDelegates[0][0].fromProposalId = 1;
+
     }
 
     function () returns (bool success) {
         if (now < closingTime + creationGracePeriod && msg.sender != address(extraBalance)) {
             uint oldTokens = balances[msg.sender];
-            return createTokenProxy(msg.sender);
-            uint createdTokens = balances[msg.sender] - oldTokens;
-            VotesAssignedToDelegate[] assignations = votesAssignedToDelegates[defaultDelegate];
-            VotesAssignedToDelegate assignation = assignations[0];
-            assignation.delegatedVotes += createdTokens;
 
-            VotesAssignedToTokenHolder[] th_assignations = votesAssignedToTokenHolders[msg.sender];
-            if (th_assignations.length == 0) {
-                th_assignations.length++;
-                VotesAssignedToTokenHolder th_assignation_new = th_assignations[0];
-                th_assignation_new.fromProposalId = 1;
-                th_assignation_new.votes = createdTokens;
-            } else {
-                VotesAssignedToTokenHolder th_assignation_actual = th_assignations[0];
-                th_assignation_actual.votes += createdTokens;
-            }
+            createTokenProxy(msg.sender);
+            uint createdTokens = balances[msg.sender] - oldTokens;
+
+            votesAssignedToDelegates[0][0].delegatedVotes += createdTokens;
+
+            votesAssignedToTokenHolders[msg.sender].length = 1;
+            votesAssignedToTokenHolders[msg.sender][0].fromProposalId = 1;
+            votesAssignedToTokenHolders[msg.sender][0].votes += createdTokens;
+
             return true;
         } else {
             return receiveEther();
@@ -611,10 +604,10 @@ contract DAO is DAOInterface, Token, TokenCreation {
             if (delegatedAssignedVotes>0) {
                 if (_supportsProposal) {
                     p.yea += delegatedAssignedVotes - p.bypassedDelegatedVotes[0];
-                    p.votedYes[msg.sender] = true;
+                    p.votedYes[0] = true;
                 } else {
                     p.nay += delegatedAssignedVotes - p.bypassedDelegatedVotes[0];
-                    p.votedNo[msg.sender] = true;
+                    p.votedNo[0] = true;
                 }
             }
         }
