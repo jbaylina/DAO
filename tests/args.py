@@ -3,7 +3,14 @@ import argparse
 import sys
 import os
 import json
-from utils import available_scenarios
+from utils import available_scenarios, calculate_bytecode
+from itertools import izip
+
+
+def pairwise(iterable):
+    "s -> (s0, s1), (s2, s3), (s4, s5), ..."
+    a = iter(iterable)
+    return izip(a, a)
 
 
 def make_bool(val):
@@ -20,6 +27,7 @@ def make_bool(val):
             sys.exit(1)
     else:
         return bool(val)
+
 
 def read_scenario_options(args):
     """ Iterate scenarios and load all argument options """
@@ -118,11 +126,31 @@ def test_args():
         action='store_true',
         help='Print the description of all scenarios and then quit'
     )
+    p.add_argument(
+        '--abi',
+        type=str,
+        default="",
+        help=(
+            "If given then don't run any tests but print the abi of the given "
+            "function with the arguments provided. Example call:"
+            "test.py --abi \"transfer address foo uint256 5\""
+        )
+    )
     args = p.parse_args()
 
     # Argument verification
     if args.users_num < 3:
         print("ERROR: Tests need 3 or more users")
         sys.exit(1)
+
+    # if it's an abi test call then just show bytecode and exit
+    if args.abi != "":
+        arglist = args.abi.split(" ")
+        function_args = []
+        for type_name, value in pairwise(arglist[1:]):
+            function_args.append((type_name, value))
+        bytecode = calculate_bytecode(arglist[0], *function_args)
+        print("Requested bytecode is:\n{}\n.Exiting ...".format(bytecode))
+        sys.exit(0)
 
     return args

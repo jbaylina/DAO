@@ -80,8 +80,8 @@ contract DAOInterface {
     mapping (address => uint) public paidOut;
     // Map of addresses blocked during a vote (not allowed to transfer DAO
     // tokens). The address points to the proposal ID.
-    mapping (address => uint) public blocked;
-
+/*    mapping (address => uint) public blocked;
+*/
     // The minimum deposit (in wei) required to submit any proposal that is not
     // requesting a new Curator (no deposit is required for splits)
     uint public proposalDeposit;
@@ -356,11 +356,16 @@ contract DAOInterface {
     /// @param _proposalID Id of the new curator proposal
     /// @return Address of the new DAO
     function getNewDAOAdress(uint _proposalID) constant returns (address _newDAO);
-
-
+/*
     /// @param _account The address of the account which is checked.
     /// @return Whether the account is blocked (not allowed to transfer tokens) or not.
-    function isBlocked(address _account) returns (bool);
+    function isBlocked(address _account) internal returns (bool);
+
+    /// @notice If the caller is blocked by a proposal whose voting deadline
+    /// has exprired then unblock him.
+    /// @return Whether the account is blocked (not allowed to transfer tokens) or not.
+    function unblockMe() returns (bool);
+*/
 
     /// @param _delegate The address of the new delegate representhing calling token holder
     /// @return Whether the change was successful or not
@@ -378,7 +383,6 @@ contract DAOInterface {
     /// @param _proposalID The proposal ID for which you want to determine the votes controlled by the delegate
     /// @return The number of votes that _delegate controls.
     function getDelegateVotingRights(address _delegate, uint _proposalID) constant returns (uint votes);
-
 
 
 
@@ -579,7 +583,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
             } else if (p.votedNo[delegate]) {
                 p.nay -= votes;
             }
-
+/*
             if (blocked[msg.sender] == 0) {
                 blocked[msg.sender] = _proposalID;
             } else if (p.votingDeadline > proposals[blocked[msg.sender]].votingDeadline) {
@@ -587,7 +591,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
                 // the proposal that blocks the sender so make it the blocker
                 blocked[msg.sender] = _proposalID;
             }
-        }
+*/        }
 
         // Vote a delegate
         uint delegatedAssignedVotes = getDelegateVotingRights(msg.sender, _proposalID);
@@ -728,7 +732,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
             // Have you voted for this split?
             || !p.votedYes[msg.sender]
             // Did you already vote on another proposal?
-            || (blocked[msg.sender] != _proposalID && blocked[msg.sender] != 0) )  {
+        /*    || (blocked[msg.sender] != _proposalID && blocked[msg.sender] != 0) */)  {
 
             throw;
         }
@@ -850,7 +854,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
     function transfer(address _to, uint256 _value) returns (bool success) {
         if (isFueled
             && now > closingTime
-            && !isBlocked(msg.sender)
+     /*       && !isBlocked(msg.sender) */
             && transferPaidOut(msg.sender, _to, _value)
             && super.transfer(_to, _value)) {
 
@@ -877,7 +881,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
     function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
         if (isFueled
             && now > closingTime
-            && !isBlocked(_from)
+    /*        && !isBlocked(_from) */
             && transferPaidOut(_from, _to, _value)
             && super.transferFrom(_from, _to, _value)) {
 
@@ -980,7 +984,6 @@ contract DAO is DAOInterface, Token, TokenCreation {
         return daoCreator.createDAO(_newCurator, _newCurator, 0, 0, now + splitExecutionPeriod);
     }
 
-
     function numberOfProposals() constant returns (uint _numberOfProposals) {
         // Don't count index 0. It's used by isBlocked() and exists from start
         return proposals.length - 1;
@@ -989,9 +992,8 @@ contract DAO is DAOInterface, Token, TokenCreation {
     function getNewDAOAdress(uint _proposalID) constant returns (address _newDAO) {
         return proposals[_proposalID].splitData[0].newDAO;
     }
-
-
-    function isBlocked(address _account) returns (bool) {
+/*
+    function isBlocked(address _account) internal returns (bool) {
         if (blocked[_account] == 0)
             return false;
         Proposal p = proposals[blocked[_account]];
@@ -1003,6 +1005,10 @@ contract DAO is DAOInterface, Token, TokenCreation {
         }
     }
 
+    function unblockMe() returns (bool) {
+        return isBlocked(msg.sender);
+    }
+*/
     function setDelegate(address _delegate) onlyTokenholders noEther returns (bool) {
 
             var (votes, oldDelegate) = getTokenHolderVotingRights(msg.sender, proposals.length+1);

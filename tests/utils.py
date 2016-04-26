@@ -457,7 +457,7 @@ def calculate_bytecode(function_name, *args):
         if arg_type == "bool" or arg_type == "uint256":
             if arg_type == "bool":
                 arg_val = 1 if arg[1] is True else 0
-            bytecode += "{0:0{1}x}".format(arg_val, 64)
+            bytecode += "{0:0{1}x}".format(int(arg_val), 64)
         elif arg_type == "address":
             bytecode += arg_val.strip("0x").zfill(64)
         else:
