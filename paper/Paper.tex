@@ -332,7 +332,7 @@ contract DAOInterface {
     ) returns (bool _success);
     function splitDAO(
         uint _proposalID,
-        address _newServiceProvider
+        address _newCurator
     ) returns (bool _success);
     function newContract(address _newContract);
     function changeAllowedRecipients(address _recipient, bool _allowed) external returns (bool _success);
@@ -355,12 +355,12 @@ contract DAOInterface {
         uint indexed proposalID,
         address recipient,
         uint amount,
-        bool newServiceProvider,
+        bool newCurator,
         string description
     );
     event Voted(uint indexed proposalID, bool position, address indexed voter);
     event ProposalTallied(uint indexed proposalID, bool result, uint quorum);
-    event NewServiceProvider(address indexed _newServiceProvider);
+    event NewCurator(address indexed _newCurator);
     event AllowedRecipientAdded(address indexed _recipient);
 }
 

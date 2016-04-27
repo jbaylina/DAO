@@ -356,6 +356,7 @@ contract DAOInterface {
     /// @param _proposalID Id of the new curator proposal
     /// @return Address of the new DAO
     function getNewDAOAdress(uint _proposalID) constant returns (address _newDAO);
+
 /*
     /// @param _account The address of the account which is checked.
     /// @return Whether the account is blocked (not allowed to transfer tokens) or not.
@@ -1002,7 +1003,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
         return proposals.length - 1;
     }
 
-    function getNewDAOAdress(uint _proposalID) constant returns (address _newDAO) {
+    function getNewDAOAddress(uint _proposalID) constant returns (address _newDAO) {
         return proposals[_proposalID].splitData[0].newDAO;
     }
 /*
