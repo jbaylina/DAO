@@ -75,6 +75,14 @@ function attempt_proposal(
     }
     proposals_num_before = argdao.numberOfProposals();
     console.log("Creating a new proposal to: '" + desc + "'");
+    console.log("recipient: " + recipient);
+    console.log("amount: " + web3.toWei(ether_amount, "ether"));
+    console.log("desc: " + desc);
+    console.log("bytecode: " + bytecode);
+    console.log("debating_period: " + debating_period);
+    console.log("is_split_proposal: " + is_split_proposal);
+    console.log("from: " + proposal_creator);
+    console.log("value: " + web3.toWei(ether_deposit, "ether"));
     argdao.newProposal.sendTransaction(
     recipient,
     web3.toWei(ether_amount, "ether"),

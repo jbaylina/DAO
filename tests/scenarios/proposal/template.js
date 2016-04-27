@@ -40,18 +40,10 @@ for (i = 0; i < votes.length; i++) {
         {
             from: eth.accounts[i],
             gas: 1000000
-        },
-        function(err, t) {
-            if (err) {
-                console.log("Error voting: " + err);
-            } else {
-                console.log("Vote succes");
-            }
         }
     );
 }
 checkWork();
-console.log("Proposal status: " + dao.proposals(prop_id));
 addToTest('proposal_yay', parseInt(web3.fromWei(dao.proposals(prop_id)[9])));
 addToTest('proposal_nay', parseInt(web3.fromWei(dao.proposals(prop_id)[10])));
 addToTest('curator_balance_before', web3.fromWei(eth.getBalance(curator)));
