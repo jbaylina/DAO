@@ -26,7 +26,7 @@ filter.watch(function (error, blockHash) {
 
 function waitBlock(cb) {
     var pendingWait = {
-        block: eth.blockNumber + 3,
+        block: eth.blockNumber + 5,
         cb: cb
     };
     pendingWaits.push(pendingWait);
@@ -104,7 +104,10 @@ var steps = [
     }},
     { step: 11, action:"P", proposal: 2},
     { step: 12, action:"V", account: 5 , proposal: 2, supports: true},
-    { step: 13, action:"V", account: 2 , proposal: 2, supports: false}
+    { step: 13, action:"V", account: 2 , proposal: 2, supports: false},
+    { step: 14, action:"V", account: 3 , proposal: 2, supports: false},
+    { step: 15, action:"V", account: 0 , proposal: 2, supports: true},
+    { step: 16, action:"V", account: 4 , proposal: 2, supports: false},
 ];
 
 miner.start();

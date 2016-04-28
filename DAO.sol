@@ -723,7 +723,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
         // Remove delegate votes
         uint previousDelegateVotes = getDelegateVotingRights(delegate, proposals.length);
 
-        updateDelegateVotes(_tokenHolder, previousDelegateVotes - previousTokenHolderVotes);
+        updateDelegateVotes(delegate, previousDelegateVotes - previousTokenHolderVotes);
 
         // Burn DAO Tokens
         Transfer(_tokenHolder, 0, balances[_tokenHolder]);
