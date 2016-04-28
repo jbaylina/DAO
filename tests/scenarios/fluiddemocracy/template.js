@@ -75,6 +75,12 @@ function run(actions, cb) {
                 if (err) return endAction(err);
                 waitBlock(endAction);
             });
+        } else if (actions[idx].action === "T") {
+            console.log("Transfer step: " + actions[idx].step);
+            dao.transfer.sendTransaction( eth.accounts[ actions[idx].to] , web3.toWei(actions[idx].value), {from: eth.accounts[actions[idx].account], gas: 1000000  }, function(err) {
+                if (err) return endAction(err);
+                waitBlock(endAction);
+            });
         }
 
     };
@@ -108,6 +114,36 @@ var steps = [
     { step: 14, action:"V", account: 3 , proposal: 2, supports: false},
     { step: 15, action:"V", account: 0 , proposal: 2, supports: true},
     { step: 16, action:"V", account: 4 , proposal: 2, supports: false},
+    { step: 17, action:"P", proposal: 3},
+    { step: 18, action:"T", account: 3, to: 5, value: 5, test: function() {
+        addToTest( "s18_tokenholder_votes_3_before",  parseInt(web3.fromWei(dao.getTokenHolderVotingRights(eth.accounts[3],3)[0])));
+        addToTest( "s18_tokenholder_votes_3_after",  parseInt(web3.fromWei(dao.getTokenHolderVotingRights(eth.accounts[3],4)[0])));
+        addToTest( "s18_tokenholder_votes_5_before",  parseInt(web3.fromWei(dao.getTokenHolderVotingRights(eth.accounts[5],3)[0])));
+        addToTest( "s18_tokenholder_votes_5_after",  parseInt(web3.fromWei(dao.getTokenHolderVotingRights(eth.accounts[5],4)[0])));
+        addToTest( "s18_delegated_votes_def_before",  parseInt(web3.fromWei(dao.getDelegateVotingRights(0,3))));
+        addToTest( "s18_delegated_votes_def_after",  parseInt(web3.fromWei(dao.getDelegateVotingRights(0,4))));
+        addToTest( "s18_delegated_votes_5_before",  parseInt(web3.fromWei(dao.getDelegateVotingRights(eth.accounts[5],3))));
+        addToTest( "s18_delegated_votes_5_after",  parseInt(web3.fromWei(dao.getDelegateVotingRights(eth.accounts[5],4))));
+    }},
+    { step: 19, action:"V", account: 1, proposal: 3, supports: true},
+    { step: 20, action:"T", account: 1, to: 5, value: 7, test: function() {
+        addToTest( "s20_tokenholder_votes_1_before",  parseInt(web3.fromWei(dao.getTokenHolderVotingRights(eth.accounts[1],3)[0])));
+        addToTest( "s20_tokenholder_votes_1_after",  parseInt(web3.fromWei(dao.getTokenHolderVotingRights(eth.accounts[1],4)[0])));
+        addToTest( "s20_tokenholder_votes_5_before",  parseInt(web3.fromWei(dao.getTokenHolderVotingRights(eth.accounts[5],3)[0])));
+        addToTest( "s20_tokenholder_votes_5_after",  parseInt(web3.fromWei(dao.getTokenHolderVotingRights(eth.accounts[5],4)[0])));
+        addToTest( "s20_delegated_votes_def_before",  parseInt(web3.fromWei(dao.getDelegateVotingRights(0,3))));
+        addToTest( "s20_delegated_votes_def_after",  parseInt(web3.fromWei(dao.getDelegateVotingRights(0,4))));
+        addToTest( "s20_delegated_votes_5_before",  parseInt(web3.fromWei(dao.getDelegateVotingRights(eth.accounts[5],3))));
+        addToTest( "s20_delegated_votes_5_after",  parseInt(web3.fromWei(dao.getDelegateVotingRights(eth.accounts[5],4))));
+    }},
+    { step: 21, action:"V", account: 3 , proposal: 3, supports: true},
+    { step: 22, action:"V", account: 5 , proposal: 3, supports: false},
+    { step: 23, action:"D", account: 4 , delegate: 5},
+    { step: 24, action:"P", proposal: 4},
+    { step: 25, action:"V", account: 4 , proposal: 3, supports: true},
+    { step: 26, action:"V", account: 5 , proposal: 4, supports: true}
+
+
 ];
 
 miner.start();
