@@ -98,6 +98,30 @@ def run(ctx):
         "n30": 10,
 
         "y32": 35,
-        "n32": 0
+        "n32": 0,
+
+        "y33": 58,
+        "n33": 0,
+
+        "s35_tokenholder_votes_1_before": 13,
+        "s35_tokenholder_votes_1_after": 0,
+        "s35_delegated_votes_def_before": 35,
+        "s35_delegated_votes_def_after": 22,
+        "s35_delegated_votes_1_before": 0,
+        "s35_delegated_votes_1_after": 0,
+
+        "s36_tokenholder_votes_0_before": 10,
+        "s36_tokenholder_votes_0_after": 0,
+        "s36_delegated_votes_def_before": 22,
+        "s36_delegated_votes_def_after": 12,
+        "s36_delegated_votes_0_before": 0,
+        "s36_delegated_votes_0_after": 0,
+
+        "s37_tokenholder_votes_4_before": 50,
+        "s37_tokenholder_votes_4_after": 0,
+        "s37_delegated_votes_def_before": 12,
+        "s37_delegated_votes_def_after": 12,
+        "s37_delegated_votes_5_before": 120,
+        "s37_delegated_votes_5_after": 70
 
     })
