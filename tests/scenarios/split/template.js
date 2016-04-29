@@ -51,8 +51,8 @@ setTimeout(function() {
     oldDAOBalance = [];
     newDAOBalance = [];
     for (i = 0; i < eth.accounts.length; i++) {
-        oldDAOBalance.push(parseInt(web3.fromWei(dao.balanceOf(eth.accounts[i]))));
-        newDAOBalance.push(parseInt(web3.fromWei(newdao.balanceOf(eth.accounts[i]))));
+        oldDAOBalance.push(parseFloat(web3.fromWei(dao.balanceOf(eth.accounts[i]))));
+        newDAOBalance.push(parseFloat(web3.fromWei(newdao.balanceOf(eth.accounts[i]))));
     }
     addToTest('oldDAOBalance', oldDAOBalance);
     addToTest('newDAOBalance', newDAOBalance);
