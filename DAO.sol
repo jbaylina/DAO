@@ -97,7 +97,7 @@ contract DAOInterface {
 
     // Default delegate
     // All tokenHolders that has not defined a delegate defaults to this delegate (delegate 0)
-    address defaultDelegate;
+    address public defaultDelegate;
 
     // Who is the delegate for each token Holders
     // Zero means the default delegate
