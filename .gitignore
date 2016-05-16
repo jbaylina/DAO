@@ -34,6 +34,8 @@ tests/spendall.js
 tests/extrabalance.js
 tests/stealextrabalance.js
 tests/firecontractor.js
+tests/fuel_predictive.js
+tests/dthpool.js
 
 # Ignore deployment related file
 deploy/code.js

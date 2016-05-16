@@ -1,4 +1,5 @@
 var _curator = web3.eth.accounts[0];
+var _delegate = web3.eth.accounts[0];
 var daoContract = web3.eth.contract($dao_abi);
 console.log("Creating DAOCreator Contract");
 var creatorContract = web3.eth.contract($creator_abi);
@@ -25,11 +26,38 @@ var _daoCreatorContract = creatorContract.new(
 		        data: '$dao_bin',
 		        gas: 4700000
 		    }, function (e, contract) {
-		        // funny thing, without this geth hangs
-		        console.log("At DAO creation callback");
-		        if (typeof contract.address != 'undefined') {
-                    addToTest('dao_address', contract.address);
-		        }
+                // funny thing, without this geth hangs
+                console.log("At DAO creation callback");
+                if (e) {
+                        console.log(e+" at DAOCreator creation!");
+                } else {
+                    if (typeof contract.address != 'undefined') {
+                        addToTest('dao_address', contract.address);
+
+                        console.log("Creating dthpool");
+
+                        var dthpoolContract = web3.eth.contract($dthpool_abi);
+
+                        var dthpool = dthpoolContract.new(
+                            contract.address,
+                            _delegate,
+                            $dthpool_max_time_blocked,
+                            {
+                                from: web3.eth.accounts[0],
+                                data: '$dthpool_bin',
+                                gas: 3000000
+                            }, function (e, contract) {
+                                console.log("At dthpool callback creation callback");
+                                if (e) {
+                                    console.log(e + " at DTHPool Contract creation!");
+                                } else if (typeof contract.address != 'undefined') {
+                                    addToTest('dthpool_address', contract.address);
+                                }
+                            }
+                        );
+                        checkWork();
+                    }
+                }
 		    });
         checkWork();
 	}
@@ -56,10 +84,10 @@ var offer = offerContract.new(
 );
 checkWork();
 console.log("mining contract, please wait");
-miner.start(1);
+miner.start();
 setTimeout(function() {
     miner.stop();
     testResults();
-}, 3000);
+}, 20000);
 
 

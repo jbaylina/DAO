@@ -15,7 +15,28 @@ You should have received a copy of the GNU lesser General Public License
 along with the DAO.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import "DAO.sol";
+contract DAOProxy {
+    function proposals(uint _proposalID) returns(
+        address recipient,
+        uint amount,
+        uint descriptionIdx,
+        uint votingDeadline,
+        bool open,
+        bool proposalPassed,
+        bytes32 proposalHash,
+        uint proposalDeposit,
+        bool newCurator
+    );
+
+    function transfer(address _to, uint256 _amount) returns (bool success);
+
+    function transferFrom(address _from, address _to, uint256 _amount) returns (bool success);
+
+    function vote(
+        uint _proposalID,
+        bool _supportsProposal
+    ) returns (uint _voteID);
+}
 
 contract DTHPoolInterface {
 
@@ -35,7 +56,7 @@ contract DTHPoolInterface {
     address public delegate;
 
     // The DAO contract
-    DAO public dao;
+    DAOProxy public dao;
 
     struct ProposalStatus {
 
@@ -115,7 +136,7 @@ contract DTHPoolInterface {
 
 contract DTHPool is DTHPoolInterface {
     function DTHPool(address _daoAddress, address _delegate,  uint _maxTimeBlocked) {
-        dao = DAO(_daoAddress);
+        dao = DAOProxy(_daoAddress);
         delegate = _delegate;
         maxTimeBlocked = _maxTimeBlocked;
     }
@@ -145,6 +166,68 @@ contract DTHPool is DTHPoolInterface {
         return true;
     }
 
+/*
+    uint public res;
+    uint public vdl;
+    bool public nc;
+    uint public n;
+
+    function setVoteIntention2(uint _proposalID, bool _willVote, bool _supportsProposal) returns (bool _success) {
+
+        if (msg.sender != delegate) {
+            res=11;
+            return;
+        }
+
+        ProposalStatus proposalStatus = proposalStatuses[_proposalID];
+
+        if (proposalStatus.voteSet) {
+            res=22;
+            return;
+        }
+
+        var (,,,votingDeadline, ,,,,newCurator) = dao.proposals(_proposalID);
+
+
+        vdl = votingDeadline;
+        nc = newCurator;
+        n = now;
+
+
+        if (votingDeadline < now) {
+            res=33;
+            return;
+        }
+
+        if (newCurator) {
+            res=44;
+            return;
+        }
+
+        proposalStatus.voteSet = true;
+        proposalStatus.willVote = _willVote;
+        proposalStatus.suportProposal = _supportsProposal;
+        proposalStatus.votingDeadline = votingDeadline;
+
+        if ( ! _willVote) {
+            proposalStatus.executed = true;
+        }
+
+        VoteIntentionSet(_proposalID, _willVote, _supportsProposal);
+
+        bool finalized = executeVote(_proposalID);
+
+        if (!finalized) {
+            pendingProposals[ pendingProposals.length++ ] = _proposalID;
+        }
+
+        res = 55;
+
+        return true;
+    }
+
+*/
+
     function setVoteIntention(uint _proposalID, bool _willVote, bool _supportsProposal) returns (bool _success) {
 
         if (msg.sender != delegate) throw;
@@ -153,7 +236,7 @@ contract DTHPool is DTHPoolInterface {
 
         if (proposalStatus.voteSet) throw;
 
-        var (,,votingDeadline, ,,,,newCurator,,,) = dao.proposals(_proposalID);
+        var (,,,votingDeadline, ,,,,newCurator) = dao.proposals(_proposalID);
 
         if (votingDeadline < now) throw;
         if (newCurator) throw;
@@ -172,7 +255,7 @@ contract DTHPool is DTHPoolInterface {
         bool finalized = executeVote(_proposalID);
 
         if (!finalized) {
-            pendingProposals[pendingProposals.length ++] = _proposalID;
+            pendingProposals[ pendingProposals.length++ ] = _proposalID;
         }
 
         return true;
