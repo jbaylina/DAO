@@ -92,7 +92,13 @@ function run(actions, cb) {
             });
         } else if (actions[idx].action === "SetVoteIntention") {
             console.log("Set vote intention step: " + actions[idx].step);
-            dthpool.setVoteIntention.sendTransaction( actions[idx].proposal , actions[idx].willVote , actions[idx].supportsProposal, {from: eth.accounts[actions[idx].account], gas: 1000000  }, function(err) {
+            dthpool.setVoteIntention.sendTransaction( actions[idx].proposal , actions[idx].willVote , actions[idx].supportsProposal, "test motivation", {from: eth.accounts[actions[idx].account], gas: 1000000  }, function(err) {
+                if (err) return endAction(err);
+                waitBlock(endAction);
+            });
+        } else if (actions[idx].action === "executeAllVotes") {
+            console.log("Set executeAllVotes step: " + actions[idx].step);
+            dthpool.executeAllVotes.sendTransaction({from: eth.accounts[actions[idx].account], gas: 1000000  }, function(err) {
                 if (err) return endAction(err);
                 waitBlock(endAction);
             });
@@ -124,7 +130,12 @@ var steps = [
         addToTest( "supportsProposal1", dthpool.proposalStatuses(1)[2]);
         addToTest( "executed1", dthpool.proposalStatuses(1)[3]);
     }},
-    { step: 5, action:"Wait", time: 10}
+    { step: 5, action:"Wait", time: 30},
+    { step: 6, action:"executeAllVotes", account: 1 ,proposal: 1, test: function() {
+        addToTest('y6' , parseInt(web3.fromWei(dao.proposals(1)[9])));
+        addToTest('n6' , parseInt(web3.fromWei(dao.proposals(1)[10])));
+    }}
+
 ];
 
 miner.start(2);

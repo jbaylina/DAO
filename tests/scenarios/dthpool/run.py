@@ -35,5 +35,7 @@ def run(ctx):
         "voteSet1": True,
         "willVote1": True,
         "supportsProposal1": True,
-        "executed1": False
+        "executed1": False,
+        "y6": 2,
+        "n6": 0
     })

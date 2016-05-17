@@ -36,9 +36,17 @@ contract DAOProxy {
         uint _proposalID,
         bool _supportsProposal
     ) returns (uint _voteID);
+
+    function balanceOf(address _owner) constant returns (uint256 balance);
 }
 
 contract DTHPoolInterface {
+
+    // name
+    string public delegateName;
+
+    // delegae url
+    string public delegateUrl;
 
     // Max time the tokens can be blocked.
     // The real voting in the DAO will be called in the last moment in order
@@ -72,8 +80,11 @@ contract DTHPoolInterface {
         // True when the vote is performed;
         bool executed;
 
-        // Votinf votingDeadline
+        // Proposal votingDeadline
         uint votingDeadline;
+
+        // String set by the delegator with the motivation
+        string motivation;
     }
 
     // Statuses of the diferent proposal
@@ -81,14 +92,14 @@ contract DTHPoolInterface {
 
 
     // List of proposals pending to vote
-    uint[] pendingProposals;
+    uint[] public pendingProposals;
 
 
     /// @dev Constructor setting the dao address and the delegate
     /// @param _elegate adddress of the delegate.
     /// @param _valueDaos that will be transfered for delegation.
     /// @param _maxTimeBlocked the maximum time the tokens will blclocked
-    // DTHPool(address _daoAddress, address _delegate, uint _maxTimeBlocked);
+    // DTHPool(address _daoAddress, address _delegate, uint _maxTimeBlocked, string _delegateName, string _delegateUrl);
 
     /// @notice send votes to this contract.
     /// @param _amount Tokens that will be transfered to the pool.
@@ -106,7 +117,7 @@ contract DTHPoolInterface {
     /// @param _proposalID The proposal to set the vote.
     /// @param _willVote true If the proposal will be voted.
     /// @param _supportsProposal What will be the vote.
-    function setVoteIntention(uint _proposalID, bool _willVote, bool _supportsProposal) returns (bool _success);
+    function setVoteIntention(uint _proposalID, bool _willVote, bool _supportsProposal, string _motivation) returns (bool _success);
 
     /// @notice This method will be do the actual voting in the DAO
     /// for the _proposalID
@@ -118,6 +129,17 @@ contract DTHPoolInterface {
     /// the end of the voting period. This function must be called regularly
     /// before each proposal endDebatingTime.
     function executeAllVotes() returns (bool _success);
+
+
+    /// @notice This function is intended because if some body sends tokens
+    /// directly to this contract, this tokens can be sended to the delegate
+    function fixTokens() returns (bool _success);
+
+
+    /// @notice If some body sends ether to this contract, the delegate will be
+    /// able to extract it.
+    function getEther() returns (uint _amount);
+
 
 
     /// @notice Called when some body delegates token to the pool
@@ -135,9 +157,14 @@ contract DTHPoolInterface {
 }
 
 contract DTHPool is DTHPoolInterface {
-    function DTHPool(address _daoAddress, address _delegate,  uint _maxTimeBlocked) {
+
+    modifier onlyDelegate() {if (msg.sender != delegate) throw; _}
+
+    function DTHPool(address _daoAddress, address _delegate,  uint _maxTimeBlocked, string _delegateName, string _delegateUrl) {
         dao = DAOProxy(_daoAddress);
         delegate = _delegate;
+        delegateName = _delegateName;
+        delegateUrl = _delegateUrl;
         maxTimeBlocked = _maxTimeBlocked;
     }
 
@@ -166,71 +193,7 @@ contract DTHPool is DTHPoolInterface {
         return true;
     }
 
-/*
-    uint public res;
-    uint public vdl;
-    bool public nc;
-    uint public n;
-
-    function setVoteIntention2(uint _proposalID, bool _willVote, bool _supportsProposal) returns (bool _success) {
-
-        if (msg.sender != delegate) {
-            res=11;
-            return;
-        }
-
-        ProposalStatus proposalStatus = proposalStatuses[_proposalID];
-
-        if (proposalStatus.voteSet) {
-            res=22;
-            return;
-        }
-
-        var (,,,votingDeadline, ,,,,newCurator) = dao.proposals(_proposalID);
-
-
-        vdl = votingDeadline;
-        nc = newCurator;
-        n = now;
-
-
-        if (votingDeadline < now) {
-            res=33;
-            return;
-        }
-
-        if (newCurator) {
-            res=44;
-            return;
-        }
-
-        proposalStatus.voteSet = true;
-        proposalStatus.willVote = _willVote;
-        proposalStatus.suportProposal = _supportsProposal;
-        proposalStatus.votingDeadline = votingDeadline;
-
-        if ( ! _willVote) {
-            proposalStatus.executed = true;
-        }
-
-        VoteIntentionSet(_proposalID, _willVote, _supportsProposal);
-
-        bool finalized = executeVote(_proposalID);
-
-        if (!finalized) {
-            pendingProposals[ pendingProposals.length++ ] = _proposalID;
-        }
-
-        res = 55;
-
-        return true;
-    }
-
-*/
-
-    function setVoteIntention(uint _proposalID, bool _willVote, bool _supportsProposal) returns (bool _success) {
-
-        if (msg.sender != delegate) throw;
+    function setVoteIntention(uint _proposalID, bool _willVote, bool _supportsProposal, string _motivation) onlyDelegate returns (bool _success) {
 
         ProposalStatus proposalStatus = proposalStatuses[_proposalID];
 
@@ -245,9 +208,11 @@ contract DTHPool is DTHPoolInterface {
         proposalStatus.willVote = _willVote;
         proposalStatus.suportProposal = _supportsProposal;
         proposalStatus.votingDeadline = votingDeadline;
+        proposalStatus.motivation = _motivation;
 
         if ( ! _willVote) {
             proposalStatus.executed = true;
+            VoteExecuted(_proposalID);
         }
 
         VoteIntentionSet(_proposalID, _willVote, _supportsProposal);
@@ -290,6 +255,30 @@ contract DTHPool is DTHPoolInterface {
             }
         }
         return true;
+    }
+
+    function fixTokens() returns (bool _success) {
+        uint ownedTokens = dao.balanceOf(this);
+
+        if (ownedTokens < totalPoolTokens) throw;
+
+        uint fixTokens = ownedTokens - totalPoolTokens;
+
+        if (fixTokens == 0) return true;
+
+        balanceOf[delegate] += fixTokens;
+        totalPoolTokens += fixTokens;
+
+        return true;
+    }
+
+    function getEther() onlyDelegate returns (uint _amount) {
+
+        uint amount = this.balance;
+
+        if (! delegate.call.value(amount)()) throw;
+
+        return amount;
     }
 
 }

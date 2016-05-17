@@ -27,7 +27,7 @@
 },
 {
     "name": "dthpool_max_time_blocked",
-    "default": 20,
+    "default": 30,
     "description": "Secons before voting end that dth can send vote to the DAO",
     "type":"int"
 }]

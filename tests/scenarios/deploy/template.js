@@ -42,6 +42,8 @@ var _daoCreatorContract = creatorContract.new(
                             contract.address,
                             _delegate,
                             $dthpool_max_time_blocked,
+                            "test",
+                            "http;//thedao.io/dthpool/test",
                             {
                                 from: web3.eth.accounts[0],
                                 data: '$dthpool_bin',
