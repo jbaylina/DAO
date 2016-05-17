@@ -49,3 +49,7 @@ paper/*.aux
 paper/*.log
 paper/*.out
 paper/*.pdf
+
+# tmp directory
+tmp/
+
