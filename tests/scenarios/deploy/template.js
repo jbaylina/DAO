@@ -26,64 +26,64 @@ var _daoCreatorContract = creatorContract.new(
 		        data: '$dao_bin',
 		        gas: 4700000
 		    }, function (e, contract) {
-                // funny thing, without this geth hangs
-                console.log("At DAO creation callback");
+		        // funny thing, without this geth hangs
+		        console.log("At DAO creation callback");
                 if (e) {
-                        console.log(e+" at DAOCreator creation!");
-                } else {
-                    if (typeof contract.address != 'undefined') {
-                        addToTest('dao_address', contract.address);
+                    console.log(e + " at DTHPool Contract creation!");
+                } else if (typeof contract.address != 'undefined') {
+                    addToTest('dao_address', contract.address);
 
-                        console.log("Creating dthpool");
+                    //  now deploy the Sample Offer
+                    var offerContract = web3.eth.contract($offer_abi);
+                    var offer = offerContract.new(
+                        contractor,
+                        contract.address, // client DAO address
+                        '0x0',  // This is a hash of the paper contract. Does not matter for testing
+                        web3.toWei($offer_total, "ether"), //total costs
+                        web3.toWei($offer_onetime, "ether"), //one time costs
+                        web3.toWei(1, "ether"), //min daily costs
+                        {
+	                        from: contractor,
+	                        data: '$offer_bin',
+	                        gas: 3000000
+                        }, function (e, offer_contract) {
+	                        if (e) {
+                                console.log(e + " at Offer Contract creation!");
+	                        } else if (typeof offer_contract.address != 'undefined') {
+                                addToTest('offer_address', offer_contract.address);
 
-                        var dthpoolContract = web3.eth.contract($dthpool_abi);
+                                console.log("Creating dthpool");
 
-                        var dthpool = dthpoolContract.new(
-                            contract.address,
-                            _delegate,
-                            $dthpool_max_time_blocked,
-                            "test",
-                            "http;//thedao.io/dthpool/test",
-                            {
-                                from: web3.eth.accounts[0],
-                                data: '$dthpool_bin',
-                                gas: 3000000
-                            }, function (e, contract) {
-                                console.log("At dthpool callback creation callback");
-                                if (e) {
-                                    console.log(e + " at DTHPool Contract creation!");
-                                } else if (typeof contract.address != 'undefined') {
-                                    addToTest('dthpool_address', contract.address);
-                                }
+                                var dthpoolContract = web3.eth.contract($dthpool_abi);
+
+                                var dthpool = dthpoolContract.new(
+                                    contract.address,
+                                    _delegate,
+                                    $dthpool_max_time_blocked,
+                                    "test",
+                                    "http;//thedao.io/dthpool/test",
+                                    {
+                                        from: web3.eth.accounts[0],
+                                        data: '$dthpool_bin',
+                                        gas: 3000000
+                                    }, function (e, contract) {
+                                        console.log("At dthpool callback creation callback");
+                                        if (e) {
+                                            console.log(e + " at DTHPool Contract creation!");
+                                        } else if (typeof contract.address != 'undefined') {
+                                            addToTest('dthpool_address', contract.address);
+                                        }
+                                    }
+                                );
+                                checkWork();
                             }
-                        );
-                        checkWork();
-                    }
-                }
+                        });
+                    checkWork();
+		        }
 		    });
         checkWork();
 	}
-    });
-checkWork();
-var offerContract = web3.eth.contract($offer_abi);
-var offer = offerContract.new(
-    _curator,
-    '0x0',  // This is a hash of the paper contract. Does not matter for testing
-    web3.toWei($offer_total, "ether"), //total costs
-    web3.toWei($offer_onetime, "ether"), //one time costs
-    web3.toWei(1, "ether"), //min daily costs
-    {
-	    from: web3.eth.accounts[0],
-	    data: '$offer_bin',
-	    gas: 3000000
-    }, function (e, contract) {
-	    if (e) {
-            console.log(e + " at Offer Contract creation!");
-	    } else if (typeof contract.address != 'undefined') {
-            addToTest('offer_address', contract.address);
-        }
-    }
-);
+});
 checkWork();
 console.log("mining contract, please wait");
 miner.start();
@@ -91,5 +91,4 @@ setTimeout(function() {
     miner.stop();
     testResults();
 }, 20000);
-
 

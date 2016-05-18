@@ -9,6 +9,7 @@ def js_common_intro(accounts_num):
     s += """// set the basic accounts, coinbase should be random so mining rewards don't pollute results
 var curator = eth.accounts[0];
 var proposalCreator = eth.accounts[1];
+var contractor = eth.accounts[1];
 var etherBase = '0x9999999999999999999999999999999999999999';
 web3.miner.setEtherbase(etherBase);
 

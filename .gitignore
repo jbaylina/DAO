@@ -36,6 +36,7 @@ tests/stealextrabalance.js
 tests/firecontractor.js
 tests/fuel_predictive.js
 tests/dthpool.js
+tests/sampleoffer_dailypayment.js
 
 # Ignore deployment related file
 deploy/code.js

@@ -49,12 +49,14 @@ contract SampleOffer {
 
     function SampleOffer(
         address _contractor,
+        address _client,
         bytes32 _IPFSHashOfTheProposalDocument,
         uint _totalCosts,
         uint _oneTimeCosts,
         uint _minDailyWithdrawLimit
     ) {
         contractor = _contractor;
+        client = DAO(_client);
         IPFSHashOfTheProposalDocument = _IPFSHashOfTheProposalDocument;
         totalCosts = _totalCosts;
         oneTimeCosts = _oneTimeCosts;
@@ -63,22 +65,23 @@ contract SampleOffer {
     }
 
     function sign() {
-        if (msg.value < totalCosts || dateOfSignature != 0)
+        if (msg.sender != address(client) // no good samaritans give us money
+            || msg.value != totalCosts    // no under/over payment
+            || dateOfSignature != 0)      // don't sign twice
             throw;
         if (!contractor.send(oneTimeCosts))
             throw;
-        client = DAO(msg.sender);
         dateOfSignature = now;
         isContractValid = true;
     }
 
-    function setDailyCosts(uint _dailyWithdrawLimit) onlyClient {
-        if (dailyWithdrawLimit >= minDailyWithdrawLimit)
+    function setDailyWithdrawLimit(uint _dailyWithdrawLimit) onlyClient {
+        if (_dailyWithdrawLimit >= minDailyWithdrawLimit)
             dailyWithdrawLimit = _dailyWithdrawLimit;
     }
 
     // "fire the contractor"
-    function returnRemainingMoney() onlyClient {
+    function returnRemainingEther() onlyClient {
         if (client.DAOrewardAccount().call.value(this.balance)())
             isContractValid = false;
     }
@@ -86,7 +89,7 @@ contract SampleOffer {
     function getDailyPayment() {
         if (msg.sender != contractor)
             throw;
-        uint amount = (now - dateOfSignature) / (1 days) * dailyWithdrawLimit - paidOut;
+        uint amount = (now - dateOfSignature + 1 days) / (1 days) * dailyWithdrawLimit - paidOut;
         if (contractor.send(amount))
             paidOut += amount;
     }
@@ -95,7 +98,7 @@ contract SampleOffer {
         rewardDivisor = _rewardDivisor;
     }
 
-    function setDeploymentFee(uint _deploymentReward) onlyClient {
+    function setDeploymentReward(uint _deploymentReward) onlyClient {
         deploymentReward = _deploymentReward;
     }
 

@@ -14,7 +14,7 @@ addToTest('creator_balance_before', web3.fromWei(eth.getBalance(proposalCreator)
 var prop_id = attempt_proposal(
     dao, // DAO in question
     '$offer_address', // recipient
-    proposalCreator, // proposal creator
+    contractor, // proposal creator
     $offer_amount, // proposal amount in ether
     '$offer_desc', // description
     '$transaction_bytecode', //bytecode
@@ -23,7 +23,7 @@ var prop_id = attempt_proposal(
     false // whether it's a split proposal or not
 );
 
-addToTest('creator_balance_after_proposal', web3.fromWei(eth.getBalance(proposalCreator)));
+addToTest('creator_balance_after_proposal', web3.fromWei(eth.getBalance(contractor)));
 addToTest(
     'calculated_deposit',
     bigDiffRound(testMap['creator_balance_before'], testMap['creator_balance_after_proposal'])
@@ -46,7 +46,7 @@ for (i = 0; i < votes.length; i++) {
 checkWork();
 addToTest('proposal_yay', parseInt(web3.fromWei(dao.proposals(prop_id)[9])));
 addToTest('proposal_nay', parseInt(web3.fromWei(dao.proposals(prop_id)[10])));
-addToTest('curator_balance_before', web3.fromWei(eth.getBalance(curator)));
+addToTest('contractor_balance_before', web3.fromWei(eth.getBalance(contractor)));
 
 setTimeout(function() {
     miner.stop();
@@ -55,17 +55,17 @@ setTimeout(function() {
         dao, // target DAO
         prop_id, // proposal ID
         '$transaction_bytecode', // transaction bytecode
-        curator, // proposal creator
+        contractor, // proposal creator
         true, // should the proposal be closed after this call?
         true // should the proposal pass?
     );
 
-    addToTest('creator_balance_after_execution', web3.fromWei(eth.getBalance(proposalCreator)));
-    addToTest('curator_balance_after', web3.fromWei(eth.getBalance(curator)));
+    addToTest('creator_balance_after_execution', web3.fromWei(eth.getBalance(contractor)));
+    addToTest('contractor_balance_after', web3.fromWei(eth.getBalance(contractor).minus(web3.toWei($proposal_deposit))));
 
     addToTest(
         'onetime_costs',
-        bigDiffRound(testMap['curator_balance_after'], testMap['curator_balance_before'])
+        bigDiffRound(testMap['contractor_balance_after'], testMap['contractor_balance_before'])
     );
     addToTest(
         'deposit_returned',
