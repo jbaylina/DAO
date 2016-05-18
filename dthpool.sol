@@ -38,8 +38,6 @@ contract DAOProxy {
     ) returns (uint _voteID);
 
     function balanceOf(address _owner) constant returns (uint256 balance);
-
-    function approve(address _spender, uint256 _amount) returns (bool success);
 }
 
 contract DTHPoolInterface {
@@ -171,8 +169,6 @@ contract DTHPool is DTHPoolInterface {
     }
 
     function delegateDAOTokens(uint _amount) returns (bool _success) {
-
-
         if (!dao.transferFrom(msg.sender, address(this), _amount)) {
             throw;
         }
