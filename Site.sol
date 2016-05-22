@@ -17,7 +17,7 @@ along with the DAO.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
     This contract is suposed to be used for any site that wants to
-    associate userIds with dao tokens.
+    associate userIds with DAO tokens.
 */
 
 contract DAOProxy {
@@ -56,6 +56,9 @@ contract SiteInterface {
     /// @notice Retrieve the total tokens associated to this userId
     /// @param _userId to get the token balance  of
     function getDTHBalanceOfUser(string _userId) constant returns(uint _dthBalance);
+
+    event Association(address indexed _from, bytes32 indexed _userIdHash);
+
 }
 
 contract Site is SiteInterface {
@@ -87,6 +90,8 @@ contract Site is SiteInterface {
 
         account2user[msg.sender] = userIdHash;
 
+        Association(msg.sender, userIdHash);
+
         return true;
     }
 
@@ -104,6 +109,5 @@ contract Site is SiteInterface {
 
         return acc;
     }
-
 }
 
