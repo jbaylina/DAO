@@ -48,7 +48,8 @@ contract SiteInterface {
     // function Site(address _daoAddress, string _siteName, string _siteUrl);
 
     /// @notice This method will assign msg.sender to the _userId
-    /// @param _userId to assign this account.
+    /// @param _userId to assign this account. UserId can be the public name or
+    /// can be a shared secret identifier betwen the siteOwner and the user.
     function associateAccountToUser(string _userId) returns(bool _success);
 
 
