@@ -1,14 +1,11 @@
 import random
-from utils import arr_str, create_votes_array
 
 scenario_description = (
-    "This scenario alternates varios createProposal, vote, transfer,"
+    "This scenario alternates various createProposal, vote, transfer,"
     " setDelegate in various tokenHolders/delegates."
-    " It checks that all the votes are countent in the correct way after each"
-    " action"
+    " It checks that all the votes are counted in the correct way after each"
+    " action."
 )
-
-
 
 
 def run(ctx):

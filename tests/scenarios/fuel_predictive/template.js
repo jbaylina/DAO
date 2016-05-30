@@ -11,12 +11,7 @@ for (i = 0; i < amounts.length; i++) {
         to: dao.address,
         gas:1000000,
         value:web3.toWei(amounts[i], "ether")
-    } /* , function(err, res) {
-        if (err) {
-            console.log(err);
-        }
-        console.log("succes: " + res);
-    } */);
+    });
 }
 
 checkWork();

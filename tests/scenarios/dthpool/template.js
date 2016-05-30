@@ -121,10 +121,6 @@ var steps = [
     }},
     { step: 3, action:"CreateProposal", account: 1 , proposal: 1, supports: false},
     { step: 4, action:"SetVoteIntention", account: 0 , proposal: 1, willVote: true, supportsProposal: true, test: function() {
-//        console.log("Res: ", dthpool.res());
-//        console.log("Voting Dead Line: ", dthpool.vdl());
-//        console.log("New Curator: ", dthpool.nc());
-//        console.log("Now: ", dthpool.n());
         addToTest( "voteSet1", dthpool.proposalStatuses(1)[0]);
         addToTest( "willVote1", dthpool.proposalStatuses(1)[1]);
         addToTest( "supportsProposal1", dthpool.proposalStatuses(1)[2]);
