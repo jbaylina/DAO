@@ -37,6 +37,11 @@ tests/firecontractor.js
 tests/fuel_predictive.js
 tests/dthpool.js
 tests/sampleoffer_dailypayment.js
+tests/sampleoffer_daopayownrewards.js
+tests/sampleoffer_setrewardvars.js
+tests/sampleoffer_changeclient.js
+tests/sampleoffer_gettersvt.js
+tests/curator_halveminquorum_fueling.js
 
 # Ignore deployment related file
 deploy/code.js

@@ -24,8 +24,6 @@ def count_token_votes(amounts, votes):
 def run(ctx):
     ctx.assert_scenario_ran('fuel')
 
-    minamount = 2  # is determined by the total costs + one time costs
-    amount = random.randint(minamount, sum(ctx.token_amounts))
     votes = create_votes_array(
         ctx.token_amounts,
         not ctx.args.proposal_fail,
@@ -37,7 +35,7 @@ def run(ctx):
         "dao_address": ctx.dao_addr,
         "offer_abi": ctx.offer_abi,
         "offer_address": ctx.offer_addr,
-        "offer_amount": amount,
+        "offer_amount": ctx.args.deploy_total_costs,
         "offer_desc": 'Test Proposal',
         "proposal_deposit": ctx.args.proposal_deposit,
         "transaction_bytecode": '0x2ca15122',  # solc --hashes SampleOffer.sol

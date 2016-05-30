@@ -8,7 +8,7 @@ scenario_description = (
 
 def run(ctx):
     ctx.assert_scenario_ran('proposal')
-    bytecode = calculate_bytecode('returnRemainingMoney')
+    bytecode = calculate_bytecode('returnRemainingEther')
     ctx.create_js_file(substitutions={
         "dao_abi": ctx.dao_abi,
         "dao_address": ctx.dao_addr,
@@ -25,5 +25,6 @@ def run(ctx):
 
     ctx.execute(expected={
         "got_back_all_money": True,
+        "bad_proposal_failed": True,
         "offer_contract_valid": False
     })
