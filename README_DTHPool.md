@@ -8,13 +8,13 @@ The DTHPool contract allows a DTH to lend their DAO Tokens to a delegate in orde
 
 To delegate the votes the DTH needs to call this two functions in two separated transactions:
 
-    1. DAO.approve(DTHPoolAdress, [amount of Ð that you want to delegate])
+    1. DAO.approve(DTHPoolAdress, [maximum amount of Ð that you want to delegate])
     2. DTHPool.delegateDAOTokens([amount Ð that you want to delegate])
 
 Once the delegation is finished, you will exchange normal DAO tokens ( Ð ) by the same
 number of delegate dao tokens ( dÐ ) .
 
-It is convenient that in mist you wathch both contracts and both tokens.
+It is convenient that in mist you watch both contracts and both tokens.
 
 ### Undelegate the votes
 
@@ -24,7 +24,7 @@ To undelegate the vote the DTH just call:
 
 The DTH will be able to undelegate and so restore his original DAO tokens at any time except in the last moments before the voting period of each proposal.
 
-### Voting mecanism
+### Voting mechanism
 
 When a new regular proposal is made to the DAO, the delegate can set his voting intention.
 
@@ -96,12 +96,12 @@ Q: Can a delegate change his vote intention?
 A: NO. He can change and comunicate any thing befor he set his intention. But once there it cannot be changed.
 
 ---
-Q: How can a user vote different that his delegate?
+Q: How can a user vote in position opposed to his delegate?
 
 A: He can undelegate his tokens, vote directly to the DAO and then, after the voting period for that proposal change, he can delegate back hist tokens.
 
 ---
-Q: Can de delegate tokens be transfered?
+Q: Can delegate dao tokens ( dÐ ) be transfered?
 
 A: Yes, like any other token.
 
