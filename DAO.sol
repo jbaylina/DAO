@@ -665,8 +665,15 @@ contract DAO is DAOInterface, Token, TokenCreation {
 
 
         // Assign reward rights to new DAO
-
         this.transferRewardTokens(p.splitData[0].newDAO, balances[msg.sender], p.splitData[0].totalSupply);
+
+        // Transfer also reward tokens of all ancestors.
+        address daoAddress = privateCreation;
+        while (daoAddress != 0) {
+            DAO ancestorDAO = DAO(daoAddress);
+            ancestorDAO.transferRewardTokens(p.splitData[0].newDAO, balances[msg.sender], p.splitData[0].totalSupply);
+            daoAddress = ancestorDAO.privateCreation();
+        }
 
         // Burn DAO Tokens
         Transfer(msg.sender, 0, balances[msg.sender]);
@@ -724,9 +731,9 @@ contract DAO is DAOInterface, Token, TokenCreation {
         address daoAddress = privateCreation;
 
         while (daoAddress != 0) {
-            DAO parentDAO = DAO(daoAddress);
-            parentDAO.retrieveDAOReward(_toMembers);
-            daoAddress = parentDAO.privateCreation();
+            DAO ancestorDAO = DAO(daoAddress);
+            ancestorDAO.retrieveDAOReward(_toMembers);
+            daoAddress = ancestorDAO.privateCreation();
         }
 
         return true;
@@ -737,6 +744,10 @@ contract DAO is DAOInterface, Token, TokenCreation {
         if (   (_amountDen == 0)
             || (_amountNum > _amountDen))
             throw;
+
+        if (_amountNum == 0)
+            return;
+
         uint rewardTokensToTransfer = rewardToken[msg.sender] * _amountNum / _amountDen;
 
         rewardToken[msg.sender] -= rewardTokensToTransfer;
@@ -746,12 +757,6 @@ contract DAO is DAOInterface, Token, TokenCreation {
 
         DAOpaidOut[msg.sender] += paidOutToBeMoved;
         DAOpaidOut[_to] +=paidOutToBeMoved;
-
-        // Transfer also paren reward tokens.
-        if (privateCreation != 0) {
-            DAO dao = DAO(privateCreation);
-            dao.transferRewardTokens(_to, _amountNum, _amountDen);
-        }
 
         return true;
     }
