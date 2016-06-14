@@ -61,3 +61,6 @@ paper/*.aux
 paper/*.log
 paper/*.out
 paper/*.pdf
+
+# node modules
+node_modules/

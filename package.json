@@ -1,0 +1,31 @@
+{
+  "name": "thedao",
+  "version": "1.1.0",
+  "description": "The DAO Framework",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/slockit/DAO.git"
+  },
+  "keywords": [
+    "DAO",
+    "ethereum"
+  ],
+  "author": "TheDAO",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/slockit/DAO/issues"
+  },
+  "homepage": "https://github.com/slockit/DAO",
+  "devDependencies": {
+    "mocha": "^2.5.3",
+    "lodash": "^4.13.1",
+    "web3": "^0.17.0-alpha"
+  }
+}
