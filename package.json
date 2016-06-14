@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "node_modules/.bin/mocha"
   },
   "repository": {
     "type": "git",
@@ -18,14 +18,17 @@
     "ethereum"
   ],
   "author": "TheDAO",
-  "license": "MIT",
+  "license": "GPL",
   "bugs": {
     "url": "https://github.com/slockit/DAO/issues"
   },
   "homepage": "https://github.com/slockit/DAO",
   "devDependencies": {
-    "mocha": "^2.5.3",
+    "async": "^2.0.0-rc.6",
+    "ethereumjs-testrpc": "^2.0.8",
     "lodash": "^4.13.1",
+    "mocha": "^2.5.3",
+    "solc": "^0.3.5",
     "web3": "^0.17.0-alpha"
   }
 }

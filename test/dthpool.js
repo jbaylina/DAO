@@ -18,8 +18,8 @@ describe('DTHPool Test', function(){
         ethConnector.init('testrpc',done);
     });
     it('should deploy a test dao', function(done){
-        this.timeout(30000);
-        closingTime = Math.floor(new Date().getTime() / 1000) + 20;
+        this.timeout(40000);
+        closingTime = Math.floor(new Date().getTime() / 1000) + 30;
         daoHelper.deployDAO({
             curator: ethConnector.accounts[0],
             proposalDeposit: ethConnector.web3.toWei(2),
